@@ -10,48 +10,13 @@
     <p>We hope you enjoy your visit.</p>
 
     <script>
-        // Function to send email with location
-        function sendEmailWithLocation(location) {
-            var ip = location.ip;
-            var country = location.country_name;
-            var region = location.region_name;
-            var city = location.city;
-            var senderEmail = "eyad.s.khoury@hotmail.com"; // Specify sender email address
-            var recipientEmail = "imobilejordan@gmail.com"; // Specify recipient email address
-            var sendgridApiKey = "SG.XF5DSjVhROqeDzQilrq6|g.cfWTYZPSUmH6x6fYpROT_a5DUVACvSju_ckysrIPrEs"; // Replace with your SendGrid API key
-
-            // Create email body
-            var body = "IP Address: " + ip + "\n";
-            body += "Country: " + country + "\n";
-            body += "Region: " + region + "\n";
-            body += "City: " + city;
-
-            // Send email using Fetch API
-            fetch('https://api.sendgrid.com/v3/mail/send', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + sendgridApiKey
-                },
-                body: JSON.stringify({
-                    personalizations: [{
-                        to: [{ email: recipientEmail }]
-                    }],
-                    from: { email: senderEmail },
-                    subject: 'User Location',
-                    content: [{
-                        type: 'text/plain',
-                        value: body
-                    }]
-                })
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Email sent successfully.');
-                } else {
-                    console.error('Failed to send email.');
-                }
-            });
+        // Function to log location information to the console
+        function logLocation(location) {
+            console.log("User Location:");
+            console.log("IP Address:", location.ip);
+            console.log("Country:", location.country_name);
+            console.log("Region:", location.region_name);
+            console.log("City:", location.city);
         }
 
         // Function to get user's IP address and location
@@ -59,8 +24,8 @@
             fetch('https://ipapi.co/json/')
                 .then(response => response.json())
                 .then(location => {
-                    // Send email with location
-                    sendEmailWithLocation(location);
+                    // Log location information to the console
+                    logLocation(location);
                 });
         }
 
